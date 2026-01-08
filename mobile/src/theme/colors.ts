@@ -7,4 +7,7 @@ export const colors = {
   buttonGradient: 'linear-gradient(90deg, #A000C8 0%, #D2691E 100%)',
   backgroundGradient: 'linear-gradient(180deg, #000000 0%, #1A0B2E 100%)', // Preto para Roxo bem escuro
   cardBackground: '#0F0F0F', // Fundo interno dos containers de vibe
+  accentYellow: '#FFB000', // Cor do termômetro
+  navBackground: 'rgba(15, 15, 15, 0.95)', // Fundo do menu inferior
+  liveDot: '#FF0000',
 };

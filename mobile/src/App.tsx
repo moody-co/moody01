@@ -1,6 +1,7 @@
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { LoginScreen } from './features/auth/LoginScreen';
 import { VibeSelectionScreen } from './features/vibes/VibeSelectionScreen';
+import { HomeScreen } from './features/home/HomeScreen';
 
 function App() {
   return (
@@ -8,6 +9,7 @@ function App() {
       <Routes>
         <Route path="/" element={<LoginScreen />} />
         <Route path="/vibes" element={<VibeSelectionScreen />} />
+        <Route path="/home" element={<HomeScreen />} />
       </Routes>
     </Router>
   );
