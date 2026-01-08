@@ -1,48 +1,56 @@
 import { colors } from '../../theme/colors';
+import { VibeCard } from '../../components/VibeCard';
+import { FaGlassMartiniAlt, FaMusic, FaUtensils } from 'react-icons/fa';
 
 export const VibeSelectionScreen = () => {
   return (
     <div style={{
-      background: colors.backgroundGradient,
+      background: 'linear-gradient(180deg, #000000 0%, #120524 100%)',
       minHeight: '100dvh',
-      padding: '60px 24px 24px 24px', // Espaçamento superior e lateral
+      padding: '60px 24px', // Mais espaço no topo
       display: 'flex',
-      flexDirection: 'column',
-      alignItems: 'flex-start', // Alinha tudo à esquerda conforme o protótipo
+      flexDirection: 'column'
     }}>
-      {/* Nome do App */}
-      <h2 style={{ 
-        color: colors.textPrimary, 
-        fontSize: '24px', 
-        fontWeight: 'bold', 
-        margin: 0,
-        letterSpacing: '1px'
-      }}>
-        MOODY
-      </h2>
-
-      {/* Título Principal */}
+      <h2 style={{ color: colors.textPrimary, fontSize: '54px', fontWeight: 'bold', margin: 0 }}>MOODY</h2>
+      
       <h1 style={{ 
         color: colors.textPrimary, 
-        fontSize: '32px', 
-        marginTop: '40px', 
-        marginBottom: '8px',
-        maxWidth: '280px', // Força a quebra de linha como no print
-        lineHeight: '1.2'
+        fontSize: '36px', // Título um pouco maior
+        marginTop: '30px', // Mais espaço abaixo do logo
+        lineHeight: '1.1',
+        fontWeight: 'bold',
+        maxWidth: '400px'
       }}>
-        What do you want to do tonight?
+        What do you want<br/>to do tonight?
       </h1>
-
-      {/* Subtítulo discreto */}
-      <p style={{ 
-        color: colors.textSecondary, 
-        fontSize: '14px', 
-        marginBottom: '40px' 
-      }}>
+      
+      <p style={{ color: colors.textSecondary, fontSize: '16px', marginTop: '12px', marginBottom: '50px' }}>
         Select a vibe to get started
       </p>
 
-      {/* Aqui entrarão os containers de Vibes que faremos a seguir */}
+      <VibeCard 
+        title="Bar / Drinks"
+        subtitle="Cocktails, pubs & lounges"
+        accentColor="#A000C8"
+        icon={<FaGlassMartiniAlt size={28} />} // Ícone maior
+        onClick={() => {}}
+      />
+
+      <VibeCard 
+        title="Club / Party"
+        subtitle="Dance floors & DJs"
+        accentColor="#0080FF"
+        icon={<FaMusic size={28} />}
+        onClick={() => {}}
+      />
+
+      <VibeCard 
+        title="Food"
+        subtitle="Late night bites & dinner"
+        accentColor="#FFB000"
+        icon={<FaUtensils size={28} />}
+        onClick={() => {}}
+      />
     </div>
   );
 };

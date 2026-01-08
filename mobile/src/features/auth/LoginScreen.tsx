@@ -4,9 +4,10 @@ import { FaApple } from 'react-icons/fa';
 import { FcGoogle } from 'react-icons/fc';
 import { useNavigate } from 'react-router-dom';
 
-const navigate = useNavigate();
+
 
 export const LoginScreen = () => {
+  const navigate = useNavigate();
   return (
     <div style={{
       backgroundColor: colors.background,

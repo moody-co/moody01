@@ -4,12 +4,9 @@ import { VibeSelectionScreen } from './features/vibes/VibeSelectionScreen';
 
 function App() {
   return (
-    <Router>
+    <Router> {/* O Router deve envolver tudo */}
       <Routes>
-        {/* Rota inicial: Login */}
         <Route path="/" element={<LoginScreen />} />
-        
-        {/* Rota de Seleção de Vibes */}
         <Route path="/vibes" element={<VibeSelectionScreen />} />
       </Routes>
     </Router>
