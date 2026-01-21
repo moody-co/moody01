@@ -5,7 +5,7 @@ import { FaGlassMartiniAlt, FaMusic, FaUtensils } from 'react-icons/fa';
 export const VibeSelectionScreen = () => {
   return (
     <div style={{
-      background: 'linear-gradient(180deg, #000000 0%, #120524 100%)',
+      background: 'linear-gradient(180deg, #000000 0%, #000000 40%,#120524 90% , #120524 100% )',
       minHeight: '100dvh',
       padding: '60px 24px', // Mais espaço no topo
       display: 'flex',

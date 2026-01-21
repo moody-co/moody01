@@ -78,7 +78,7 @@ export const LoginScreen = () => {
           <div style={{ flex: 1, height: '1px', backgroundColor: '#333' }}></div>
         </div>
 
-        <Button variant="gradient" label="Continue with email" onClick={() => navigate('/vibes')} />
+        <Button variant="gradient" label="Continue with email" onClick={() => navigate('/auth/vibes')} />
 
         <p style={{ 
           color: colors.textSecondary, 
