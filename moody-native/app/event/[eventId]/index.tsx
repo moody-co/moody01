@@ -11,14 +11,14 @@ const COLORS = {
   promoBg: '#46154D',
   promoBorder: '#8D189F',
 
-  // ✅ Cards “Tonight’s Vibe”
-  vibeCardBg: 'rgba(66,45,102,0.28)', // 🔧 diminua/aumente a opacidade aqui (0.40 ~ 0.76)
-  vibeCardBorder: 'rgba(142,142,142,0.30)', // 🔧 borda mais suave
+  // Cards “Tonight’s Vibe”
+  vibeCardBg: 'rgba(66,45,102,0.28)',
+  vibeCardBorder: 'rgba(142,142,142,0.30)',
 
-  label: 'rgba(142,142,142,0.60)', // título do card (music/crowd etc)
+  label: 'rgba(142,142,142,0.60)',
   textSoft: 'rgba(255,255,255,0.55)',
 
-  // ✅ live checkins
+  // live checkins
   checkinDot: 'rgba(57,255,20,0.95)',
   checkinCardBg: 'rgba(255,255,255,0.06)',
   checkinCardBorder: 'rgba(255,255,255,0.10)',
@@ -29,24 +29,38 @@ export default function EventDetails() {
 
   const event = useMemo(
     () => ({
-      title: 'WHite Party',
+      id: eventId ?? '1',
+      title: 'White Party',
+
+      // ✅ IMPORTANTE: precisamos do venueId pra abrir o perfil do local
+      venueId: 'neon-lounge',
+      venueName: "OBECO'S BAR",
+
       city: 'São Paulo',
       area: 'Vila Madalena',
+
       promoTitle: '2 for 1',
       promoText: 'Only for the first 50 people',
+
       vibe: [
         { icon: 'musical-notes', label: 'music', value: 'Pop / Funk' },
         { icon: 'people', label: 'crowd', value: 'Medium' },
         { icon: 'sparkles', label: 'vibe', value: 'Lively' },
-        { icon: 'time', label: 'open until', value: '4:00 Am' },
+        { icon: 'cash', label: 'price', value: '$$' },
       ] as const,
+
       image:
         'https://images.unsplash.com/photo-1516450360452-9312f5e86fc7?auto=format&fit=crop&w=1200&q=80',
+
       live: [
-        { name: 'Lucas Guerra', text: 'Musica rolando e muito animado, vem que ta pocando', time: '5m ago' },
+        {
+          name: 'Lucas Guerra',
+          text: 'Musica rolando e muito animado, vem que ta pocando',
+          time: '5m ago',
+        },
       ],
     }),
-    []
+    [eventId]
   )
 
   return (
@@ -84,9 +98,26 @@ export default function EventDetails() {
             </Pressable>
           </View>
 
-          <Text style={{ marginTop: 6, color: COLORS.accentSoft, fontSize: 14, fontWeight: '600' }}>
-            {event.city} · {event.area}
-          </Text>
+          {/* ✅ SUBTÍTULO + NOME DO LOCAL CLICÁVEL */}
+          <View style={{ marginTop: 6, flexDirection: 'row', alignItems: 'center', flexWrap: 'wrap', gap: 8 }}>
+            <Text style={{ color: COLORS.accentSoft, fontSize: 14, fontWeight: '600' }}>
+              {event.city} · {event.area}
+            </Text>
+
+            <Text style={{ color: 'rgba(255,255,255,0.25)', fontWeight: '700' }}>•</Text>
+
+            <Pressable
+              onPress={() =>
+                router.push({ pathname: '/venue/[venueId]', params: { venueId: event.venueId } } as any)
+              }
+              style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}
+            >
+              <Ionicons name="location-outline" size={14} color="rgba(255,255,255,0.75)" />
+              <Text style={{ color: 'rgba(255,255,255,0.85)', fontSize: 14, fontWeight: '700' }}>
+                {event.venueName}
+              </Text>
+            </Pressable>
+          </View>
 
           {/* divider */}
           <View
@@ -98,7 +129,7 @@ export default function EventDetails() {
             }}
           />
 
-          {/* ✅ PROMO CARD com ícone “confete” */}
+          {/* PROMO CARD */}
           <View
             style={{
               backgroundColor: COLORS.promoBg,
@@ -124,7 +155,6 @@ export default function EventDetails() {
                 justifyContent: 'center',
               }}
             >
-              {/* 🎉 confete (Ionicons não tem "confetti", então usamos um equivalente visual) */}
               <Ionicons name="sparkles" size={18} color="#FF5CFF" />
             </View>
 
@@ -153,7 +183,7 @@ export default function EventDetails() {
             <MiniCard icon="cash" label="price" value="$$" />
           </View>
 
-          {/* ✅ LIVE CHECK-INS */}
+          {/* LIVE CHECK-INS */}
           <View style={{ marginTop: 18 }}>
             <View style={{ flexDirection: 'row', alignItems: 'center', gap: 10, marginBottom: 12 }}>
               <View
@@ -206,7 +236,7 @@ export default function EventDetails() {
         </View>
       </ScrollView>
 
-      {/* ✅ Bottom buttons: Maps ~20% e Going ocupa o resto */}
+      {/* Bottom buttons */}
       <View
         style={{
           position: 'absolute',
@@ -222,11 +252,11 @@ export default function EventDetails() {
         }}
       >
         <View style={{ flexDirection: 'row', alignItems: 'center', gap: 12 }}>
-          {/* Maps pequeno (≈20%) */}
+          {/* Maps pequeno */}
           <Pressable
             onPress={() => router.push({ pathname: '/event/[eventId]/presence', params: { eventId } } as any)}
             style={{
-              width: 80, // 🔧 ajuste aqui (70~90) para chegar no ~20%
+              width: 80, // 🔧 70~90
               height: 52,
               borderRadius: 14,
               borderWidth: 1,
