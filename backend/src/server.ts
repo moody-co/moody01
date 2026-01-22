@@ -1,8 +1,14 @@
 import { env } from './config/env.js'
 import { buildApp } from './app.js'
+import { prisma } from './lib/prisma.js'
 
 async function main() {
   const app = await buildApp()
+
+  app.get('/health/db', async () => {
+  await prisma.$queryRaw`SELECT 1`
+  return { ok: true, db: 'connected' }
+})
 
   await app.listen({
     port: env.PORT,
@@ -11,6 +17,8 @@ async function main() {
 
   app.log.info(`🚀 Backend running on http://localhost:${env.PORT}`)
 }
+
+
 
 main().catch((err) => {
   // eslint-disable-next-line no-console
