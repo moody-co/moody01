@@ -1,28 +1,48 @@
 import { NavLink, Outlet, useLocation } from 'react-router-dom'
 import { FaCompass, FaTicketAlt, FaUser } from 'react-icons/fa'
+import { FiRadio } from 'react-icons/fi'
 
-function isDiscoverActive(pathname: string) {
-  return pathname.startsWith('/app/discover')
+function startsWith(pathname: string, base: string) {
+  return pathname.startsWith(base)
 }
 
 export const MainTabsLayout = () => {
   const location = useLocation()
+  const pathname = location.pathname
 
-  const discoverActive = isDiscoverActive(location.pathname)
-  const ticketsActive = location.pathname.startsWith('/app/tickets')
-  const profileActive = location.pathname.startsWith('/app/profile')
+  // Actives
+  const discoverActive = startsWith(pathname, '/app/discover')
+  const liveActive = startsWith(pathname, '/app/live')
+  const ticketsActive = startsWith(pathname, '/app/tickets')
+  const profileActive = startsWith(pathname, '/app/profile')
 
-  // ✅ esconde nav quando estiver na página de detalhes: /app/discover/:id
- const hideNav = /^\/app\/discover\/[^/]+(\/presence|\/verified|\/checkin|\/camera|\/thanks|\/profile)?$/.test(location.pathname)
+  /**
+   * ✅ Esconder a nav quando:
+   * - estiver em detalhes do evento: /app/discover/:eventId
+   * - ou nos fluxos do evento: /presence /verified /checkin /camera /thanks
+   * - ou em detalhes do local: /app/venues/:venueId  (você disse que lá não vai ter bottom nav)
+   */
+  const hideNav =
+    /^\/app\/discover\/[^/]+(\/presence|\/verified|\/checkin|\/camera|\/thanks)?$/.test(pathname) ||
+    /^\/app\/venues\/[^/]+$/.test(pathname)
 
-
-
-
-
+  // Colors (seu padrão)
   const baseColor = '#A279E8'
   const activeColor = 'rgba(255,255,255,0.95)'
   const inactiveColor = baseColor
   const colorFor = (active: boolean) => (active ? activeColor : inactiveColor)
+
+  // ✅ estilo único: cada item ocupa 1/4 da barra
+  const navItemStyle = (active: boolean): React.CSSProperties => ({
+    flex: 1,
+    textAlign: 'center',
+    color: colorFor(active),
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
+    justifyContent: 'center',
+    userSelect: 'none',
+  })
 
   return (
     <div style={{ minHeight: '100dvh', backgroundColor: '#000' }}>
@@ -32,7 +52,7 @@ export const MainTabsLayout = () => {
         <div
           style={{
             position: 'fixed',
-            bottom: 44, // 👈 aqui você sobe/desce a barra
+            bottom: 44,
             left: '50%',
             transform: 'translateX(-50%)',
             width: '90%',
@@ -44,27 +64,38 @@ export const MainTabsLayout = () => {
             boxShadow: '0 16px 40px rgba(0,0,0,0.55)',
             zIndex: 1000,
             display: 'flex',
-            justifyContent: 'space-around',
+            justifyContent: 'space-between',
             alignItems: 'center',
             fontFamily: 'Inter, system-ui, Arial',
           }}
         >
-          <NavLink to="/app/discover" style={{ textDecoration: 'none' }}>
-            <div style={{ width: 90, textAlign: 'center', color: colorFor(discoverActive) }}>
+          {/* Discover */}
+          <NavLink to="/app/discover" style={{ textDecoration: 'none', flex: 1 }}>
+            <div style={navItemStyle(discoverActive)}>
               <FaCompass size={22} />
               <div style={{ fontSize: 12, marginTop: 6, fontWeight: 700 }}>Discover</div>
             </div>
           </NavLink>
 
-          <NavLink to="/app/tickets" style={{ textDecoration: 'none' }}>
-            <div style={{ width: 90, textAlign: 'center', color: colorFor(ticketsActive) }}>
+          {/* Live */}
+          <NavLink to="/app/live" style={{ textDecoration: 'none', flex: 1 }}>
+            <div style={navItemStyle(liveActive)}>
+              <FiRadio size={22} />
+              <div style={{ fontSize: 12, marginTop: 6, fontWeight: 700 }}>Live</div>
+            </div>
+          </NavLink>
+
+          {/* Tickets */}
+          <NavLink to="/app/tickets" style={{ textDecoration: 'none', flex: 1 }}>
+            <div style={navItemStyle(ticketsActive)}>
               <FaTicketAlt size={22} />
               <div style={{ fontSize: 12, marginTop: 6, fontWeight: 700 }}>Tickets</div>
             </div>
           </NavLink>
 
-          <NavLink to="/app/profile" style={{ textDecoration: 'none' }}>
-            <div style={{ width: 90, textAlign: 'center', color: colorFor(profileActive) }}>
+          {/* Profile */}
+          <NavLink to="/app/profile" style={{ textDecoration: 'none', flex: 1 }}>
+            <div style={navItemStyle(profileActive)}>
               <FaUser size={22} />
               <div style={{ fontSize: 12, marginTop: 6, fontWeight: 700 }}>Profile</div>
             </div>

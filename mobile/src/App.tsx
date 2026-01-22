@@ -14,6 +14,9 @@ import { PresenceVerifiedScreen } from './features/presence/PresenceVerifiedScre
 import { QuickCheckinScreen } from './features/checkin/QuickCheckinScreen'
 import { CheckinCameraScreen } from './features/checkin/CheckinCameraScreen'
 import { CheckinThanksScreen } from './features/checkin/CheckinThanksScreen'
+import { VenueDetailsScreen } from './features/discover/VenueDetailsScreen'
+import { LiveNowScreen } from './features/live/LiveNowScreen'
+
 
 
 export default function App() {
@@ -38,9 +41,11 @@ export default function App() {
           <Route path="discover/:eventId/checkin" element={<QuickCheckinScreen />} />
           <Route path="discover/:eventId/camera" element={<CheckinCameraScreen />} />
           <Route path="discover/:eventId/thanks" element={<CheckinThanksScreen />} />
-          
+          <Route path="venues/:venueId" element={<VenueDetailsScreen />} />
+
+          <Route path="live" element={<LiveNowScreen />} />
           <Route path="tickets" element={<TicketsScreen />} />
-          <Route path="/profile" element={<ProfileScreen />} />
+          <Route path="profile" element={<ProfileScreen />} />
         </Route>
 
         {/* Fallback */}

@@ -41,7 +41,7 @@ const Chip = ({ children }: { children: React.ReactNode }) => {
 export const ProfileScreen = () => {
   const navigate = useNavigate()
 
-  // Mockzinho 
+  // Mockzinho (depois você liga no backend/auth)
   const user = useMemo(
     () => ({
       name: 'Sarah Mitchell',
@@ -62,7 +62,7 @@ export const ProfileScreen = () => {
       color: '#fff',
       fontFamily: 'Inter, system-ui, Arial',
       padding: 18,
-      paddingBottom: 96, 
+      paddingBottom: 96, // espaço do bottom nav
       display: 'flex',
       justifyContent: 'center',
     },

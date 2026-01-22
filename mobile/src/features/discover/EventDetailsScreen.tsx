@@ -105,9 +105,36 @@ export const EventDetailsScreen = () => {
         </div>
 
         {/* small info under title */}
-        <div style={{ marginTop: 8, color: 'rgba(255,255,255,0.65)', fontWeight: 500, fontSize: 16 }}>
-          {event.venueName} &nbsp;•&nbsp; {event.distanceKm.toFixed(1)} km away
+        
+        <div style={{ marginTop: 8, display: 'flex', alignItems: 'center', gap: 8 }}>
+          <button
+            type="button"
+            onClick={() => navigate(`/app/venues/${event.id}`)}
+            style={{
+              background: 'transparent',
+              border: 'none',
+              padding: 0,
+              margin: 0,
+              color: 'rgba(255,255,255,0.80)',
+              fontWeight: 300,
+              fontSize: 14,
+              cursor: 'pointer',
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: 8,
+            }}
+          >
+            <span>{event.venueName}</span>
+            <FaChevronRight size={12} style={{ opacity: 0.6 }} />
+          </button>
+
+          <span style={{ color: 'rgba(255,255,255,0.35)' }}>•</span>
+
+          <span style={{ color: 'rgba(255,255,255,0.65)', fontWeight: 500, fontSize: 16 }}>
+            {event.distanceKm.toFixed(1)} km away
+          </span>
         </div>
+
 
         {/* Promo (mais destacado) */}
         {event.promo && (
