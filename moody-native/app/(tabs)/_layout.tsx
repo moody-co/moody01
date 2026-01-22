@@ -27,9 +27,9 @@ export default function TabsLayout() {
 
         tabBarIcon: ({ focused, color, size }) => {
           let iconName: any = 'compass-outline'
-
-          if (route.name === 'discover') iconName = focused ? 'compass' : 'compass-outline'
           if (route.name === 'tickets') iconName = focused ? 'ticket' : 'ticket-outline'
+          if (route.name === 'live') iconName = focused ? 'radio' : 'radio-outline'
+          if (route.name === 'discover') iconName = focused ? 'compass' : 'compass-outline'
           if (route.name === 'profile') iconName = focused ? 'person' : 'person-outline'
 
           return (
@@ -41,9 +41,10 @@ export default function TabsLayout() {
       })}
     >
       <Tabs.Screen name="discover" options={{ title: 'Discover' }} />
+      <Tabs.Screen name="live" options={{ title: 'Live' }} />
       <Tabs.Screen name="tickets" options={{ title: 'Tickets' }} />
       <Tabs.Screen name="profile" options={{ title: 'Profile' }} />
-      <Tabs.Screen name="live" options={{ title: 'Live' }} />
+      
     </Tabs>
   )
 }
