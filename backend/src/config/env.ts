@@ -1,16 +1,19 @@
 import 'dotenv/config'
 import { z } from 'zod'
 
-const EnvSchema = z.object({
+const schema = z.object({
   NODE_ENV: z.string().default('development'),
   PORT: z.coerce.number().default(3333),
-
-  DATABASE_URL: z.string().min(1),
-
   JWT_SECRET: z.string().min(10),
-
-  STRIPE_SECRET_KEY: z.string().optional(),
-  STRIPE_WEBHOOK_SECRET: z.string().optional(),
+  DATABASE_URL: z.string().min(1),
 })
 
-export const env = EnvSchema.parse(process.env)
+const parsed = schema.safeParse(process.env)
+
+if (!parsed.success) {
+  // eslint-disable-next-line no-console
+  console.error('❌ Invalid env:', parsed.error.flatten().fieldErrors)
+  throw new Error('Invalid environment variables.')
+}
+
+export const env = parsed.data

@@ -10,6 +10,5 @@ export const validateBody =
         issues: parsed.error.issues,
       })
     }
-    // @ts-expect-error - attach parsed body
     req.body = parsed.data
   }
