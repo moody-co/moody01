@@ -38,12 +38,9 @@ export default function App() {
           <Route path="discover/:eventId/checkin" element={<QuickCheckinScreen />} />
           <Route path="discover/:eventId/camera" element={<CheckinCameraScreen />} />
           <Route path="discover/:eventId/thanks" element={<CheckinThanksScreen />} />
-
-
-
-
+          
           <Route path="tickets" element={<TicketsScreen />} />
-          <Route path="profile" element={<ProfileScreen />} />
+          <Route path="/profile" element={<ProfileScreen />} />
         </Route>
 
         {/* Fallback */}

@@ -13,7 +13,7 @@ export const MainTabsLayout = () => {
   const profileActive = location.pathname.startsWith('/app/profile')
 
   // ✅ esconde nav quando estiver na página de detalhes: /app/discover/:id
- const hideNav = /^\/app\/discover\/[^/]+(\/presence|\/verified|\/checkin|\/camera|\/thanks)?$/.test(location.pathname)
+ const hideNav = /^\/app\/discover\/[^/]+(\/presence|\/verified|\/checkin|\/camera|\/thanks|\/profile)?$/.test(location.pathname)
 
 
 
