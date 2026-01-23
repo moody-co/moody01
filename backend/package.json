@@ -18,10 +18,12 @@
     "bcryptjs": "^3.0.3",
     "dotenv": "^16.0.0",
     "fastify": "^5.0.0",
+    "jsonwebtoken": "^9.0.3",
     "zod": "^4.3.6"
   },
   "devDependencies": {
     "@types/bcryptjs": "^2.4.6",
+    "@types/jsonwebtoken": "^9.0.10",
     "@types/node": "^22.0.0",
     "prisma": "^6.19.2",
     "tsconfig-paths": "^4.2.0",
