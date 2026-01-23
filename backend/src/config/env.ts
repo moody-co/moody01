@@ -1,19 +1,9 @@
-import 'dotenv/config'
-import { z } from 'zod'
+export const env = {
+  NODE_ENV: process.env.NODE_ENV ?? 'development',
+  PORT: Number(process.env.PORT ?? 3333),
 
-const schema = z.object({
-  NODE_ENV: z.string().default('development'),
-  PORT: z.coerce.number().default(3333),
-  JWT_SECRET: z.string().min(10),
-  DATABASE_URL: z.string().min(1),
-})
+  JWT_SECRET: process.env.JWT_SECRET ?? 'dev_secret_change_me',
 
-const parsed = schema.safeParse(process.env)
-
-if (!parsed.success) {
-  // eslint-disable-next-line no-console
-  console.error('❌ Invalid env:', parsed.error.flatten().fieldErrors)
-  throw new Error('Invalid environment variables.')
+  // opcional: se quiser mudar expiração
+  JWT_EXPIRES_IN: process.env.JWT_EXPIRES_IN ?? '7d',
 }
-
-export const env = parsed.data

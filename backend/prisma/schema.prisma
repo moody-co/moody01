@@ -7,7 +7,6 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-
 enum VenueCategory {
   CLUB
   BAR
@@ -41,22 +40,43 @@ enum YesNo {
 }
 
 model User {
-  id          String   @id @default(cuid())
-  email       String?  @unique
-  username    String?  @unique
-  name        String
-  avatarUrl   String?
-  bio         String?
-  city        String?
-  state       String?
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  id           String   @id @default(cuid())
+  email        String?  @unique
+  username     String?  @unique
+  name         String
+  passwordHash String?  
+  avatarUrl    String?
+  bio          String?
+  city         String?
+  state        String?
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
 
-  checkins    Checkin[]
-  reviews     Review[]
-  tickets     Ticket[]
-  presences   PresenceVerification[]
-  payments    Payment[]
+  sessions     Session[] 
+
+  checkins     Checkin[]
+  reviews      Review[]
+  tickets      Ticket[]
+  presences    PresenceVerification[]
+  payments     Payment[]
+}
+
+model Session {
+  id               String   @id @default(cuid())
+  userId           String
+  refreshTokenHash String
+  expiresAt        DateTime
+  revokedAt        DateTime?
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+
+  userAgent        String?
+  ip              String?
+
+  user             User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, expiresAt])
+  @@index([expiresAt])
 }
 
 model Venue {
@@ -70,7 +90,6 @@ model Venue {
   state         String?
   country       String?       @default("BR")
 
-  // geolocalização simples (depois dá pra evoluir)
   lat           Decimal?      @db.Decimal(10, 7)
   lng           Decimal?      @db.Decimal(10, 7)
 
@@ -91,7 +110,6 @@ model Event {
   area         String?
   imageUrl     String?
 
-  // promo (opcional)
   promoTitle   String?
   promoText    String?
 
@@ -114,8 +132,6 @@ model PresenceVerification {
   eventId    String
 
   verifiedAt DateTime @default(now())
-
-  // ✅ deixa explícito o unlock de 30 min
   unlockAt   DateTime
 
   createdAt  DateTime @default(now())
@@ -138,7 +154,6 @@ model Checkin {
   promoActive YesNo
   worthIt     YesNo
 
-  // foto validação (como você faz na câmera)
   photoUrl    String?
 
   createdAt   DateTime @default(now())
@@ -157,7 +172,7 @@ model Review {
   userId    String
   venueId   String
 
-  rating    Int?     // 1..5 opcional (se quiser)
+  rating    Int?
   content   String
 
   createdAt DateTime @default(now())
@@ -174,8 +189,8 @@ model Ticket {
   eventId     String
 
   status      TicketStatus @default(ACTIVE)
-  code        String       @unique // ex: "NEON-248-XJ9"
-  qrPayload   String       // valor usado pra gerar o QR
+  code        String       @unique
+  qrPayload   String
 
   createdAt   DateTime     @default(now())
   updatedAt   DateTime     @updatedAt
@@ -187,22 +202,20 @@ model Ticket {
 }
 
 model Payment {
-  id            String   @id @default(cuid())
-  userId        String
+  id          String   @id @default(cuid())
+  userId      String
 
-  // prepara para Stripe
-  provider      String   @default("stripe")
-  status        String   // created, pending, paid, failed, refunded...
-  amountCents   Int
-  currency      String   @default("BRL")
+  provider    String   @default("stripe")
+  status      String
+  amountCents Int
+  currency    String   @default("BRL")
 
-  // ids externos (stripe)
-  providerRef   String?  @unique
+  providerRef String?  @unique
 
-  createdAt     DateTime @default(now())
-  updatedAt     DateTime @updatedAt
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
 
-  user          User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@index([userId, createdAt])
 }

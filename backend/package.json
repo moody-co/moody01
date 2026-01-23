@@ -2,9 +2,8 @@
   "name": "moody-backend",
   "version": "1.0.0",
   "private": true,
-  "type": "module",
   "scripts": {
-    "dev": "tsx watch src/server.ts",
+    "dev": "tsx watch -r tsconfig-paths/register src/server.ts",
     "build": "tsc -p tsconfig.json",
     "start": "node dist/server.js",
     "prisma:generate": "prisma generate",
@@ -12,17 +11,20 @@
     "prisma:studio": "prisma studio"
   },
   "dependencies": {
-    "@fastify/cors": "^10.0.0",
-    "@fastify/jwt": "^9.0.0",
+    "@fastify/cors": "^10.1.0",
+    "@fastify/jwt": "^9.1.0",
     "@fastify/rate-limit": "^10.0.0",
     "@prisma/client": "^6.19.2",
+    "bcryptjs": "^3.0.3",
     "dotenv": "^16.0.0",
     "fastify": "^5.0.0",
-    "zod": "^4.0.0"
+    "zod": "^4.3.6"
   },
   "devDependencies": {
+    "@types/bcryptjs": "^2.4.6",
     "@types/node": "^22.0.0",
     "prisma": "^6.19.2",
+    "tsconfig-paths": "^4.2.0",
     "tsx": "^4.0.0",
     "typescript": "^5.0.0"
   }

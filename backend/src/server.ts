@@ -1,27 +1,29 @@
-import { env } from './config/env.js'
-import { buildApp } from './app.js'
-import { prisma } from './lib/prisma.js'
+import Fastify from 'fastify'
+import jwt from '@fastify/jwt'
+import { authRoutes } from '@/modules/auth/auth.routes'
+import { env } from '@/config/env'
+import { usersRoutes } from '@/modules/users/users.routes'
 
-async function main() {
-  const app = await buildApp()
+async function bootstrap() {
+  const app = Fastify({ logger: true })
 
-  app.get('/health/db', async () => {
-  await prisma.$queryRaw`SELECT 1`
-  return { ok: true, db: 'connected' }
-})
-
-  await app.listen({
-    port: env.PORT,
-    host: '0.0.0.0',
+  // JWT
+  app.register(jwt, {
+    secret: env.JWT_SECRET,
   })
 
-  app.log.info(`🚀 Backend running on http://localhost:${env.PORT}`)
+  // rotas
+  app.register(authRoutes)
+  app.register(usersRoutes)
+
+  // health
+  app.get('/health', async () => ({ ok: true }))
+
+  await app.listen({ port: env.PORT, host: '0.0.0.0' })
+  app.log.info(`Backend running on http://localhost:${env.PORT}`)
 }
 
-
-
-main().catch((err) => {
-  // eslint-disable-next-line no-console
+bootstrap().catch((err) => {
   console.error(err)
   process.exit(1)
 })
