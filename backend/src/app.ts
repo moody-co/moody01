@@ -17,9 +17,7 @@ import { paymentsRoutes } from './modules/payments/payments.routes.js'
 import { httpErrorMiddleware } from './shared/errors/httpErrorMiddleware.js'
 
 export async function buildApp() {
-  const app = Fastify({
-    logger: true,
-  })
+  const app = Fastify({ logger: true })
 
   await app.register(cors, { origin: true })
 
@@ -27,7 +25,6 @@ export async function buildApp() {
     max: 120,
     timeWindow: '1 minute',
   })
-
 
   // routes
   await app.register(healthRoutes, { prefix: '/health' })
