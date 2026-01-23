@@ -1,9 +1,18 @@
-export const env = {
-  NODE_ENV: process.env.NODE_ENV ?? 'development',
-  PORT: Number(process.env.PORT ?? 3333),
+import { z } from 'zod'
 
-  JWT_SECRET: process.env.JWT_SECRET ?? 'dev_secret_change_me',
+const envSchema = z.object({
+  NODE_ENV: z.enum(['development', 'test', 'production']).default('development'),
+  PORT: z.coerce.number().default(3333),
 
-  // opcional: se quiser mudar expiração
-  JWT_EXPIRES_IN: process.env.JWT_EXPIRES_IN ?? '7d',
-}
+  DATABASE_URL: z.string().min(1),
+
+  // ✅ separados (mais seguro)
+  JWT_ACCESS_SECRET: z.string().min(16),
+  JWT_REFRESH_SECRET: z.string().min(16),
+
+  // ✅ Access curto (ex: 15min) e Refresh longo (30 dias)
+  ACCESS_TOKEN_TTL_MIN: z.coerce.number().default(15),
+  REFRESH_TOKEN_TTL_DAYS: z.coerce.number().default(30),
+})
+
+export const env = envSchema.parse(process.env)

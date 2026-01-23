@@ -1,8 +1,14 @@
 import bcrypt from 'bcryptjs'
 import { prisma } from '@/lib/prisma'
 import { UsersService } from '@/modules/users/users.service'
+import { AppError } from '@/shared/errors/AppError'
 import { hashToken, safeCompare } from './auth.hash'
-import { makeAccessToken, makeRefreshToken, refreshExpiresAt, verifyRefreshToken } from './auth.tokens'
+import {
+  makeAccessToken,
+  makeRefreshToken,
+  refreshExpiresAt,
+  verifyRefreshToken,
+} from './auth.tokens'
 
 export class AuthService {
   private users = new UsersService()
@@ -49,10 +55,14 @@ export class AuthService {
     const email = emailRaw.trim().toLowerCase()
 
     const user = await prisma.user.findUnique({ where: { email } })
-    if (!user || !user.passwordHash) throw new Error('INVALID_CREDENTIALS')
+    if (!user || !user.passwordHash) {
+      throw new AppError('INVALID_CREDENTIALS', 401)
+    }
 
     const ok = await bcrypt.compare(password, user.passwordHash)
-    if (!ok) throw new Error('INVALID_CREDENTIALS')
+    if (!ok) {
+      throw new AppError('INVALID_CREDENTIALS', 401)
+    }
 
     const session = await prisma.session.create({
       data: {
@@ -79,7 +89,13 @@ export class AuthService {
     })
 
     return {
-      user: { id: user.id, name: user.name, email: user.email, username: user.username, avatarUrl: user.avatarUrl },
+      user: {
+        id: user.id,
+        name: user.name,
+        email: user.email,
+        username: user.username,
+        avatarUrl: user.avatarUrl,
+      },
       accessToken,
       refreshToken,
       refreshExpiresAt: session.expiresAt,
@@ -90,9 +106,9 @@ export class AuthService {
     const payload = verifyRefreshToken(refreshToken) // { sub, sid }
 
     const session = await prisma.session.findUnique({ where: { id: payload.sid } })
-    if (!session) throw new Error('SESSION_NOT_FOUND')
-    if (session.revokedAt) throw new Error('SESSION_REVOKED')
-    if (session.expiresAt.getTime() < Date.now()) throw new Error('SESSION_EXPIRED')
+    if (!session) throw new AppError('SESSION_NOT_FOUND', 401)
+    if (session.revokedAt) throw new AppError('SESSION_REVOKED', 401)
+    if (session.expiresAt.getTime() < Date.now()) throw new AppError('SESSION_EXPIRED', 401)
 
     const incomingHash = hashToken(refreshToken)
     const ok = safeCompare(session.refreshTokenHash, incomingHash)
@@ -103,7 +119,7 @@ export class AuthService {
         where: { id: session.id },
         data: { revokedAt: new Date() },
       })
-      throw new Error('REFRESH_INVALID')
+      throw new AppError('REFRESH_INVALID', 401)
     }
 
     // ✅ rotation + renovação para +30 dias
@@ -122,7 +138,7 @@ export class AuthService {
     })
 
     const user = await prisma.user.findUnique({ where: { id: payload.sub } })
-    if (!user) throw new Error('USER_NOT_FOUND')
+    if (!user) throw new AppError('USER_NOT_FOUND', 404)
 
     const newAccessToken = makeAccessToken({
       sub: user.id,

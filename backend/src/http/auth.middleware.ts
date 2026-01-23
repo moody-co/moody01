@@ -1,19 +1,30 @@
 import { FastifyReply, FastifyRequest } from 'fastify'
+import { AppError } from '@/shared/errors/AppError'
 import { verifyAccessToken } from '@/modules/auth/auth.tokens'
 
-export async function authGuard(req: FastifyRequest, reply: FastifyReply) {
-  const auth = req.headers.authorization
-  if (!auth?.startsWith('Bearer ')) {
-    return reply.status(401).send({ ok: false, error: 'UNAUTHORIZED' })
+export async function requireAuth(request: FastifyRequest, _reply: FastifyReply) {
+  const auth = request.headers.authorization
+
+  if (!auth) {
+    throw new AppError('UNAUTHORIZED', 401)
   }
 
-  const token = auth.slice('Bearer '.length)
+  const [type, token] = auth.split(' ')
+
+  if (type !== 'Bearer' || !token) {
+    throw new AppError('UNAUTHORIZED', 401)
+  }
 
   try {
     const payload = verifyAccessToken(token)
-    // @ts-ignore - adiciona user no request
-    req.user = { id: payload.sub, email: payload.email, username: payload.username }
+
+    // ✅ padroniza o user no request
+    request.user = {
+      id: payload.sub,
+      email: payload.email,
+      username: payload.username,
+    }
   } catch {
-    return reply.status(401).send({ ok: false, error: 'INVALID_TOKEN' })
+    throw new AppError('UNAUTHORIZED', 401)
   }
 }

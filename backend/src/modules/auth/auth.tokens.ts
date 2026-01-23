@@ -1,40 +1,43 @@
 import jwt from 'jsonwebtoken'
+import { env } from '@/config/env'
 
-export type AccessPayload = {
+type AccessTokenPayload = {
   sub: string
-  email?: string | null
-  username?: string | null
+  email: string | null
+  username: string | null
 }
 
-export type RefreshPayload = {
+type RefreshTokenPayload = {
   sub: string
   sid: string
 }
 
-const ACCESS_SECRET = process.env.JWT_ACCESS_SECRET!
-const REFRESH_SECRET = process.env.JWT_REFRESH_SECRET!
-
-const ACCESS_MIN = Number(process.env.ACCESS_TOKEN_TTL_MIN ?? 15)
-const REFRESH_DAYS = Number(process.env.REFRESH_TOKEN_TTL_DAYS ?? 30)
-
-export function makeAccessToken(payload: AccessPayload) {
-  return jwt.sign(payload, ACCESS_SECRET, { expiresIn: `${ACCESS_MIN}m` })
-}
-
-export function verifyAccessToken(token: string) {
-  return jwt.verify(token, ACCESS_SECRET) as AccessPayload & { iat: number; exp: number }
-}
-
-export function makeRefreshToken(payload: RefreshPayload) {
-  return jwt.sign(payload, REFRESH_SECRET, { expiresIn: `${REFRESH_DAYS}d` })
-}
-
-export function verifyRefreshToken(token: string) {
-  return jwt.verify(token, REFRESH_SECRET) as RefreshPayload & { iat: number; exp: number }
+function accessExpiresIn() {
+  // jsonwebtoken aceita string também, mas aqui mantemos número em segundos
+  return env.ACCESS_TOKEN_TTL_MIN * 60
 }
 
 export function refreshExpiresAt() {
-  const d = new Date()
-  d.setDate(d.getDate() + REFRESH_DAYS)
-  return d
+  const ms = env.REFRESH_TOKEN_TTL_DAYS * 24 * 60 * 60 * 1000
+  return new Date(Date.now() + ms)
+}
+
+export function makeAccessToken(payload: AccessTokenPayload) {
+  return jwt.sign(payload, env.JWT_ACCESS_SECRET, {
+    expiresIn: accessExpiresIn(),
+  })
+}
+
+export function verifyAccessToken(token: string): AccessTokenPayload {
+  return jwt.verify(token, env.JWT_ACCESS_SECRET) as AccessTokenPayload
+}
+
+export function makeRefreshToken(payload: RefreshTokenPayload) {
+  return jwt.sign(payload, env.JWT_REFRESH_SECRET, {
+    expiresIn: `${env.REFRESH_TOKEN_TTL_DAYS}d`,
+  })
+}
+
+export function verifyRefreshToken(token: string): RefreshTokenPayload {
+  return jwt.verify(token, env.JWT_REFRESH_SECRET) as RefreshTokenPayload
 }

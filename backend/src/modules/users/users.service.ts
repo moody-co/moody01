@@ -1,16 +1,17 @@
 import bcrypt from 'bcryptjs'
 import { prisma } from '@/lib/prisma'
+import { AppError } from '@/shared/errors/AppError'
 
 export class UsersService {
   async createUser(input: { name: string; email: string; username: string; password: string }) {
     const email = input.email.trim().toLowerCase()
     const username = input.username.trim().toLowerCase()
 
-    const existingEmail = await prisma.user.findUnique({ where: { email } })
-    if (existingEmail) throw new Error('EMAIL_ALREADY_USED')
+    const existsEmail = await prisma.user.findUnique({ where: { email } })
+    if (existsEmail) throw new AppError('EMAIL_ALREADY_IN_USE', 409)
 
-    const existingUsername = await prisma.user.findUnique({ where: { username } })
-    if (existingUsername) throw new Error('USERNAME_ALREADY_USED')
+    const existsUsername = await prisma.user.findUnique({ where: { username } })
+    if (existsUsername) throw new AppError('USERNAME_ALREADY_IN_USE', 409)
 
     const passwordHash = await bcrypt.hash(input.password, 10)
 
@@ -21,7 +22,18 @@ export class UsersService {
         username,
         passwordHash,
       },
-      select: { id: true, name: true, email: true, username: true, avatarUrl: true },
+      select: {
+        id: true,
+        name: true,
+        email: true,
+        username: true,
+        avatarUrl: true,
+        bio: true,
+        city: true,
+        state: true,
+        createdAt: true,
+        updatedAt: true,
+      },
     })
 
     return user

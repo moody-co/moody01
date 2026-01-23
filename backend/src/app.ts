@@ -1,6 +1,5 @@
 import Fastify from 'fastify'
 import cors from '@fastify/cors'
-import jwt from '@fastify/jwt'
 import rateLimit from '@fastify/rate-limit'
 
 import { env } from './config/env.js'
@@ -29,9 +28,6 @@ export async function buildApp() {
     timeWindow: '1 minute',
   })
 
-  await app.register(jwt, {
-    secret: env.JWT_SECRET,
-  })
 
   // routes
   await app.register(healthRoutes, { prefix: '/health' })
