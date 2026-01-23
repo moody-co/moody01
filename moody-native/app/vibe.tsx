@@ -2,7 +2,7 @@ import { View, Text, Pressable } from 'react-native'
 import { LinearGradient } from 'expo-linear-gradient'
 import { router } from 'expo-router'
 import { Ionicons } from '@expo/vector-icons'
-import { VibeCard } from '@/components/VibeCard'
+import { VibeCard } from 'components/VibeCard'
 
 const colors = {
   bgTop: '#000000',
