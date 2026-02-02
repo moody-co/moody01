@@ -1,4 +1,4 @@
-import { apiFetch } from '@/config/api'
+import { apiFetch } from '@/src/config/api'
 import type { AuthResponse, LoginDTO, RegisterDTO, RefreshResponse } from './auth.types'
 
 export async function apiRegister(dto: RegisterDTO) {

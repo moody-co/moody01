@@ -1,6 +1,6 @@
 import type { FastifyReply, FastifyRequest } from 'fastify'
 import { AppError } from '../errors/AppError.js'
-import { verifyAccessToken } from '@/modules/auth/auth.tokens'
+import { verifyAccessToken } from '../../modules/auth/auth.tokens.js'
 
 type AuthUser = {
   id: string

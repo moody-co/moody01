@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import { View, Text, TextInput, Pressable } from 'react-native'
 import { router } from 'expo-router'
-import { useAuth } from '@/auth/auth.hooks'
+import { useAuth } from '@/src/auth/auth.hooks'
 
 export default function RegisterScreen() {
   const { register } = useAuth()

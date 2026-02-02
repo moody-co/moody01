@@ -1,6 +1,5 @@
-// src/auth/auth.context.tsx
 import React, { createContext, useCallback, useEffect, useMemo, useRef, useState } from 'react'
-import { ApiError, apiFetch } from '@/config/api'
+import { ApiError, apiFetch } from '@/src/config/api'
 import type { AuthUser, LoginDTO, RegisterDTO } from './auth.types'
 import { apiLogin, apiLogout, apiRefresh, apiRegister } from './auth.client'
 import { deleteRefreshToken, getRefreshToken, saveRefreshToken } from './auth.storage'

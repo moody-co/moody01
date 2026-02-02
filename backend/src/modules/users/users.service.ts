@@ -1,6 +1,6 @@
 import bcrypt from 'bcryptjs'
-import { prisma } from '@/lib/prisma'
-import { AppError } from '@/shared/errors/AppError'
+import { prisma } from '../../lib/prisma.js'
+import { AppError } from '../../shared/errors/AppError.js'
 
 export class UsersService {
   async createUser(input: { name: string; email: string; username: string; password: string }) {

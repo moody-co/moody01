@@ -2,19 +2,19 @@ import Fastify from 'fastify'
 import cors from '@fastify/cors'
 import rateLimit from '@fastify/rate-limit'
 
-import { env } from '@/config/env'
+import { env } from './config/env.js'
 
-import { httpErrorMiddleware } from '@/shared/errors/httpErrorMiddleware'
+import { httpErrorMiddleware } from './shared/errors/httpErrorMiddleware.js'
 
-import { healthRoutes } from '@/modules/health/health.routes'
-import { authRoutes } from '@/modules/auth/auth.routes'
-import { usersRoutes } from '@/modules/users/users.routes'
-import { venuesRoutes } from '@/modules/venues/venues.routes'
-import { eventsRoutes } from '@/modules/events/events.routes'
-import { checkinsRoutes } from '@/modules/checkins/checkins.routes'
-import { reviewsRoutes } from '@/modules/reviews/reviews.routes'
-import { ticketsRoutes } from '@/modules/tickets/tickets.routes'
-import { paymentsRoutes } from '@/modules/payments/payments.routes'
+import { healthRoutes } from './modules/health/health.routes.js'
+import { authRoutes } from './modules/auth/auth.routes.js'
+import { usersRoutes } from './modules/users/users.routes.js'
+import { venuesRoutes } from './modules/venues/venues.routes.js'
+import { eventsRoutes } from './modules/events/events.routes.js'
+import { checkinsRoutes } from './modules/checkins/checkins.routes.js'
+import { reviewsRoutes } from './modules/reviews/reviews.routes.js'
+import { ticketsRoutes } from './modules/tickets/tickets.routes.js'
+import { paymentsRoutes } from './modules/payments/payments.routes.js'
 
 async function main() {
   const app = Fastify({ logger: true })

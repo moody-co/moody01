@@ -1,9 +1,9 @@
 import bcrypt from 'bcryptjs'
-import { prisma } from '@/lib/prisma'
-import { UsersService } from '@/modules/users/users.service'
+import { prisma } from '../../lib/prisma.js'
+import { UsersService } from '../users/users.service.js'
 import { hashToken, safeCompare } from './auth.hash'
 import { makeAccessToken, makeRefreshToken, refreshExpiresAt, verifyRefreshToken } from './auth.tokens'
-import { AppError } from '@/shared/errors/AppError'
+import { AppError } from '../../shared/errors/AppError.js'
 
 export class AuthService {
   private users = new UsersService()
