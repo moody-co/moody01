@@ -73,8 +73,8 @@ export function PlaceCard({ name, location, liveCount, temperature, image, onPre
           <Text
             style={{
               color: '#fff',
-              fontSize: 20,
-              fontFamily: 'Inter_800ExtraBold',
+              fontSize: 22,
+              fontFamily: 'Inter_700Bold',
               lineHeight: 22,
               flex: 1,
             }}

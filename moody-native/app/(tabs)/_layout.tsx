@@ -1,15 +1,21 @@
+// app/(tabs)/_layout.tsx
 import React from 'react'
-import { Stack } from 'expo-router'
-import { StatusBar } from 'expo-status-bar'
+import { Tabs } from 'expo-router'
+import { MoodyTabBar } from '@/components/moody-tab-bar'
 
-import { AuthProvider } from '@/src/auth/auth.context'
-
-
-export default function RootLayout() {
+export default function TabsLayout() {
   return (
-    <AuthProvider>
-      <StatusBar style="light" />
-      <Stack screenOptions={{ headerShown: false }} />
-    </AuthProvider>
+    <Tabs
+      screenOptions={{
+        headerShown: false,
+        tabBarShowLabel: false,
+      }}
+      tabBar={(props) => <MoodyTabBar {...props} />}
+    >
+      <Tabs.Screen name="discover" />
+      <Tabs.Screen name="live" />
+      <Tabs.Screen name="tickets" />
+      <Tabs.Screen name="profile" />
+    </Tabs>
   )
 }

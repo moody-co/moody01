@@ -73,8 +73,8 @@ export default function DiscoverScreen() {
             style={{
               marginTop: 6,
               color: '#C6AFED',
-              fontFamily: 'Inter_600SemiBold',
-              fontSize: 30,
+              fontFamily: 'Inter_800ExtraBold',
+              fontSize: 28,
               lineHeight: 36,
             }}
           >
@@ -90,7 +90,8 @@ export default function DiscoverScreen() {
             borderWidth: 1,
             borderColor: 'rgba(255,255,255,0.08)',
             paddingVertical: 10,
-            paddingHorizontal: 16,
+            paddingHorizontal: 17,
+            marginTop: 19,
             borderRadius: 999,
             flexDirection: 'row',
             alignItems: 'center',
