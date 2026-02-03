@@ -5,7 +5,7 @@ type Props = {
   name: string
   location: string
   liveCount: number
-  temperature: 'Hot' | 'Warm' | 'Cold' | string
+  temperature: 'Hot' | 'Warm' | 'Cold' | string | undefined
   image: string
   onPress?: () => void
 }
