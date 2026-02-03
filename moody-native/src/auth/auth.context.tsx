@@ -1,5 +1,5 @@
 import React, { createContext, useCallback, useEffect, useMemo, useRef, useState } from 'react'
-import { ApiError, apiFetch } from '@/src/config/api'
+import { ApiError, apiFetch, ApiRequestOptions } from '@/src/config/api'
 import type { AuthUser, LoginDTO, RegisterDTO } from './auth.types'
 import { apiLogin, apiLogout, apiRefresh, apiRegister } from './auth.client'
 import { deleteRefreshToken, getRefreshToken, saveRefreshToken } from './auth.storage'
@@ -16,8 +16,7 @@ type AuthContextValue = AuthState & {
   login: (dto: LoginDTO) => Promise<void>
   logout: () => Promise<void>
 
-  // wrapper que já faz refresh automático se der 401
-  authedFetch: <T>(path: string, opts?: { method?: any; body?: any }) => Promise<T>
+  authedFetch: <T>(path: string, opts?: Omit<ApiRequestOptions, 'accessToken'>) => Promise<T>
 }
 
 export const AuthContext = createContext<AuthContextValue | null>(null)
@@ -27,7 +26,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [accessToken, setAccessToken] = useState<string | null>(null)
   const [isBooting, setIsBooting] = useState(true)
 
-  // evita várias chamadas de refresh ao mesmo tempo
   const refreshLock = useRef<Promise<string> | null>(null)
 
   const isAuthed = !!accessToken && !!user

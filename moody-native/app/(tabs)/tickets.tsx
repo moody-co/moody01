@@ -12,23 +12,9 @@ import {
 import { Ionicons } from '@expo/vector-icons'
 import QRCode from 'react-native-qrcode-svg'
 
-type TicketStatus = 'ACTIVE' | 'CONFIRMED'
-type TicketBadge = 'HOT' | 'FREE ENTRY'
-
-type Ticket = {
-  id: string
-  title: string
-  venue: string
-  dateLabel: string
-  status: TicketStatus
-  badge?: TicketBadge
-  coverUrl?: string
-  // payload do QR
-  qrValue: string
-  codeLabel: string // tipo: "NEON - 248 - XJ9"
-}
-
-type TabKey = 'upcoming' | 'past'
+import { ScreenState } from '@/components/ui/ScreenState'
+import { useTickets } from '@/src/features/tickets/use-tickets'
+import type { Ticket, TicketBadge, TicketStatus, TabKey } from '@/src/features/tickets/tickets.types'
 
 const COLORS = {
   bg: '#000',
@@ -110,36 +96,27 @@ function TicketCard({
   onDetails: () => void
   onAddCalendar: () => void
 }) {
-  const isHot = ticket.badge === 'HOT'
-  const isFree = ticket.badge === 'FREE ENTRY'
-  const statusVariant = ticket.status === 'ACTIVE' ? 'purple' : 'green'
+  const isHot = ticket.badge === ('HOT' as TicketBadge)
+  const isFree = ticket.badge === ('FREE ENTRY' as TicketBadge)
+  const statusVariant = ticket.status === ('ACTIVE' as TicketStatus) ? 'purple' : 'green'
 
   return (
     <View style={styles.card}>
       {/* Cover */}
       <View style={styles.coverWrap}>
         <ImageBackground
-          source={
-            ticket.coverUrl
-              ? { uri: ticket.coverUrl }
-              : undefined
-          }
+          source={ticket.coverUrl ? { uri: ticket.coverUrl } : undefined}
           style={styles.cover}
           imageStyle={styles.coverImg}
         >
-          {/* fallback cover se não tiver imagem */}
           {!ticket.coverUrl ? <View style={styles.coverFallback} /> : null}
-
-          {/* overlay */}
           <View style={styles.coverOverlay} />
 
-          {/* top left badges */}
           <View style={styles.coverBadgesLeft}>
             {isHot ? <Pill label="HOT" variant="red" /> : null}
             {isFree ? <Pill label="FREE ENTRY" variant="neutral" /> : null}
           </View>
 
-          {/* top right status */}
           <View style={styles.coverBadgesRight}>
             <Pill label={ticket.status} variant={statusVariant} />
           </View>
@@ -162,7 +139,6 @@ function TicketCard({
           </View>
         </View>
 
-        {/* Buttons */}
         <View style={styles.btnRow}>
           <Pressable style={styles.btnPrimary} onPress={onView}>
             <Text style={styles.btnPrimaryText}>🎟️ View Ticket</Text>
@@ -173,7 +149,6 @@ function TicketCard({
           </Pressable>
         </View>
 
-        {/* Add to calendar */}
         <Pressable style={styles.calendarBtn} onPress={onAddCalendar}>
           <Ionicons name="calendar-outline" size={13} color="rgba(255,255,255,0.55)" />
           <Text style={styles.calendarText}>Add to calendar</Text>
@@ -225,16 +200,9 @@ function TicketSheet({
   if (!ticket) return null
 
   return (
-    <Modal
-      transparent
-      visible={visible}
-      animationType="slide"
-      onRequestClose={onClose}
-    >
-      {/* backdrop */}
+    <Modal transparent visible={visible} animationType="slide" onRequestClose={onClose}>
       <Pressable style={styles.backdrop} onPress={onClose} />
 
-      {/* sheet */}
       <View style={styles.sheet}>
         <View style={styles.sheetHandle} />
 
@@ -269,50 +237,9 @@ export default function TicketsScreen() {
   const [tab, setTab] = useState<TabKey>('upcoming')
   const [openTicketId, setOpenTicketId] = useState<string | null>(null)
 
-  const tickets = useMemo<Ticket[]>(() => {
-    const upcoming: Ticket[] = [
-      {
-        id: 't1',
-        title: 'The Neon Party',
-        venue: "Jocker’s Bar",
-        dateLabel: 'Fri, Oct 24 • 23:00',
-        status: 'ACTIVE',
-        badge: 'HOT',
-        coverUrl:
-          'https://images.unsplash.com/photo-1516450360452-9312f5e86fc7?auto=format&fit=crop&w=1200&q=80',
-        qrValue: 'moody://ticket/t1',
-        codeLabel: 'NEON - 248 - XJ9',
-      },
-      {
-        id: 't2',
-        title: 'Midnight Session',
-        venue: 'House Club',
-        dateLabel: 'Sat, Oct 25 • 22:00',
-        status: 'CONFIRMED',
-        badge: 'FREE ENTRY',
-        coverUrl:
-          'https://images.unsplash.com/photo-1545128485-c400e7702796?auto=format&fit=crop&w=1200&q=80',
-        qrValue: 'moody://ticket/t2',
-        codeLabel: 'MIDS - 902 - QK1',
-      },
-    ]
+  const { data, loading, error, reload } = useTickets(tab)
 
-    const past: Ticket[] = [
-      {
-        id: 'p1',
-        title: 'Retro Night',
-        venue: 'Downtown Lounge',
-        dateLabel: 'Sat, Sep 14 • 21:00',
-        status: 'CONFIRMED',
-        coverUrl:
-          'https://images.unsplash.com/photo-1506157786151-b8491531f063?auto=format&fit=crop&w=1200&q=80',
-        qrValue: 'moody://ticket/p1',
-        codeLabel: 'RETR - 111 - AA0',
-      },
-    ]
-
-    return tab === 'upcoming' ? upcoming : past
-  }, [tab])
+  const tickets = data?.tickets ?? []
 
   const selectedTicket = useMemo(
     () => tickets.find((t) => t.id === openTicketId) ?? null,
@@ -321,51 +248,48 @@ export default function TicketsScreen() {
 
   return (
     <View style={styles.page}>
-      <ScrollView
-        showsVerticalScrollIndicator={false}
-        contentContainerStyle={{ paddingBottom: 28 }}
-      >
-        {/* Header */}
+      <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ paddingBottom: 28 }}>
         <View style={styles.topRow}>
           <Text style={styles.title}>Tickets</Text>
 
-          <Pressable
-            style={styles.iconBtn}
-            onPress={() => {
-              // depois: modal opções/filtro
-            }}
-          >
+          <Pressable style={styles.iconBtn} onPress={() => {}}>
             <Ionicons name="ellipsis-horizontal" size={18} color="rgba(255,255,255,0.85)" />
           </Pressable>
         </View>
 
-        {/* Tabs */}
-        <SegmentedTabs value={tab} onChange={setTab} />
+        <SegmentedTabs value={tab} onChange={(v) => {
+          setOpenTicketId(null)
+          setTab(v)
+        }} />
 
-        {/* List */}
-        <View style={styles.list}>
-          {tickets.map((t) => (
-            <TicketCard
-              key={t.id}
-              ticket={t}
-              onView={() => setOpenTicketId(t.id)}
-              onDetails={() => {
-                // depois: ir pra details do evento/ingresso
-              }}
-              onAddCalendar={() => {
-                // depois: integrar calendário
-              }}
-            />
-          ))}
-        </View>
+        {loading ? (
+          <ScreenState variant="loading" title="Loading..." />
+        ) : error ? (
+          <ScreenState variant="error" message={error} onRetry={reload} />
+        ) : tickets.length === 0 ? (
+          <ScreenState
+            variant="empty"
+            title="No tickets"
+            message={tab === 'upcoming' ? 'No upcoming tickets yet.' : 'No past tickets yet.'}
+            onAction={reload}
+            actionText="Refresh"
+          />
+        ) : (
+          <View style={styles.list}>
+            {tickets.map((t) => (
+              <TicketCard
+                key={t.id}
+                ticket={t}
+                onView={() => setOpenTicketId(t.id)}
+                onDetails={() => {}}
+                onAddCalendar={() => {}}
+              />
+            ))}
+          </View>
+        )}
       </ScrollView>
 
-      {/* Sheet */}
-      <TicketSheet
-        visible={!!openTicketId}
-        onClose={() => setOpenTicketId(null)}
-        ticket={selectedTicket}
-      />
+      <TicketSheet visible={!!openTicketId} onClose={() => setOpenTicketId(null)} ticket={selectedTicket} />
     </View>
   )
 }
@@ -579,7 +503,6 @@ const styles = StyleSheet.create({
     fontFamily: 'Inter_500Medium',
   },
 
-  // ===== Sheet =====
   backdrop: {
     flex: 1,
     backgroundColor: 'rgba(0,0,0,0.55)',

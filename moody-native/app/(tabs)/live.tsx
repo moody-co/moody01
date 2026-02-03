@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from 'react'
+import React, { useState } from 'react'
 import {
   View,
   Text,
@@ -12,28 +12,9 @@ import { Ionicons } from '@expo/vector-icons'
 import { LinearGradient } from 'expo-linear-gradient'
 import { router } from 'expo-router'
 
-type LiveTab = 'all' | 'clubs' | 'bars' | 'restaurants'
-
-type LivePlace = {
-  id: string
-  name: string
-  category: string
-  distanceKm: number
-  statusLeft: string // ex: "Full"
-  statusMid: string // ex: "Lively"
-  statusRight: string // ex: "2m ago"
-  heroUrl: string
-  peakNow?: boolean
-}
-
-type BusyCard = {
-  id: string
-  title: string
-  place: string
-  subtitle: string
-  timeTag: string
-  thumbUrl: string
-}
+import { ScreenState } from '@/components/ui/ScreenState'
+import { useLiveNow } from '@/src/features/live/use-live-now'
+import type { LiveTab, BusyCard } from '@/src/features/live/live.types'
 
 const COLORS = {
   bg: '#000',
@@ -147,50 +128,39 @@ function MiniCard({
 
 export default function LiveNowScreen() {
   const [tab, setTab] = useState<LiveTab>('all')
-
-  const hero = useMemo<LivePlace>(
-    () => ({
-      id: 'nebula',
-      name: 'Nebula Club',
-      category: 'Nightclub',
-      distanceKm: 0.3,
-      statusLeft: 'Full',
-      statusMid: 'Lively',
-      statusRight: '2m ago',
-      peakNow: true,
-      heroUrl:
-        'https://images.unsplash.com/photo-1545128485-c400e7702796?auto=format&fit=crop&w=1200&q=80',
-    }),
-    []
-  )
-
-  const busy = useMemo<BusyCard[]>(
-    () => [
-      {
-        id: 'covoid',
-        title: 'The Void',
-        place: 'Cocktail Bar',
-        subtitle: 'Check-ins spiking',
-        timeTag: 'Just now',
-        thumbUrl:
-          'https://images.unsplash.com/photo-1559339352-11d035aa65de?auto=format&fit=crop&w=200&q=80',
-      },
-      {
-        id: 'echo',
-        title: 'Echo Hall',
-        place: 'Live Music',
-        subtitle: 'Band started',
-        timeTag: '5 min ago',
-        thumbUrl:
-          'https://images.unsplash.com/photo-1524368535928-5b5e00ddc76b?auto=format&fit=crop&w=200&q=80',
-      },
-    ],
-    []
-  )
+  const { data, loading, error, reload } = useLiveNow(tab)
 
   const onGoVenue = (venueId: string) => {
-    // Se você criou app/venue/[venueId]/index.tsx:
     router.push({ pathname: '/venue/[venueId]', params: { venueId } } as any)
+  }
+
+  // Estados de tela padronizados
+  if (loading) {
+    return (
+      <View style={styles.page}>
+        <ScreenState variant="loading" title="Loading..." />
+      </View>
+    )
+  }
+
+  if (error) {
+    return (
+      <View style={styles.page}>
+        <ScreenState variant="error" message={error} onRetry={reload} />
+      </View>
+    )
+  }
+
+  const hero = data?.hero
+  const busy = data?.busy ?? []
+
+  // Se por algum motivo vier vazio (backend no futuro), mostramos empty state
+  if (!hero) {
+    return (
+      <View style={styles.page}>
+        <ScreenState variant="empty" message="Sem dados no momento." onAction={reload} actionText="Recarregar" />
+      </View>
+    )
   }
 
   return (
@@ -215,9 +185,21 @@ export default function LiveNowScreen() {
 
         {/* Tabs */}
         <View style={styles.tabsRow}>
-          <ChipTab active={tab === 'all'} label="All" onPress={() => setTab('all')} />
-          <ChipTab active={tab === 'clubs'} label="Clubs" onPress={() => setTab('clubs')} />
-          <ChipTab active={tab === 'bars'} label="Bars" onPress={() => setTab('bars')} />
+          <ChipTab
+            active={tab === 'all'}
+            label="All"
+            onPress={() => setTab('all')}
+          />
+          <ChipTab
+            active={tab === 'clubs'}
+            label="Clubs"
+            onPress={() => setTab('clubs')}
+          />
+          <ChipTab
+            active={tab === 'bars'}
+            label="Bars"
+            onPress={() => setTab('bars')}
+          />
           <ChipTab
             active={tab === 'restaurants'}
             label="Restaurants"

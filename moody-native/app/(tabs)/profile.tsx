@@ -1,6 +1,11 @@
-import React, { useMemo } from 'react'
+import React from 'react'
 import { View, Text, StyleSheet, Pressable, Image } from 'react-native'
 import { Ionicons } from '@expo/vector-icons'
+import { router } from 'expo-router'
+
+import { ScreenState } from '@/components/ui/ScreenState'
+import { useProfile } from '@/src/features/profile/use-profile'
+import { useAuth } from '@/src/auth/auth.hooks'
 
 type StatItem = { value: number | string; label: string }
 
@@ -22,18 +27,54 @@ function Chip({ children, onPress }: { children: React.ReactNode; onPress?: () =
 }
 
 export default function ProfileScreen() {
-  const user = useMemo(
-    () => ({
-      name: 'Sarah Mitchell',
-      username: '@sarah_m',
-      location: 'São Paulo - SP',
-      bio: 'Nightlife enthusiast & electronic music lover. Always looking for the next best vibe',
-      avatarUrl:
-        'https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&w=200&q=80',
-      isOnline: true,
-    }),
-    []
-  )
+  const { data, loading, error, reload } = useProfile()
+  const auth = useAuth()
+
+  const user = data?.user
+
+  async function onLogout() {
+    // troque aqui se o seu auth usa outro nome:
+    const fn =
+      (auth as any).logout ??
+      (auth as any).signOut ??
+      (auth as any).clearSession
+
+    if (typeof fn === 'function') {
+      await fn()
+    }
+
+    router.replace('/(auth)/login')
+  }
+
+  if (loading) {
+    return (
+      <View style={styles.page}>
+        <ScreenState variant="loading" title="Loading..." />
+      </View>
+    )
+  }
+
+  if (error) {
+    return (
+      <View style={styles.page}>
+        <ScreenState variant="error" message={error} onRetry={reload} />
+      </View>
+    )
+  }
+
+  if (!user) {
+    return (
+      <View style={styles.page}>
+        <ScreenState
+          variant="empty"
+          title="No profile"
+          message="Não foi possível carregar seu perfil."
+          onAction={reload}
+          actionText="Recarregar"
+        />
+      </View>
+    )
+  }
 
   return (
     <View style={styles.page}>
@@ -63,7 +104,14 @@ export default function ProfileScreen() {
         {/* MAIN CARD */}
         <View style={styles.card}>
           <View style={styles.avatarWrap}>
-            <Image source={{ uri: user.avatarUrl }} style={styles.avatar} />
+            <Image
+              source={
+                user.avatarUrl
+                  ? { uri: user.avatarUrl }
+                  : { uri: 'https://images.unsplash.com/photo-1527980965255-d3b416303d12?auto=format&fit=crop&w=200&q=80' }
+              }
+              style={styles.avatar}
+            />
             <View style={styles.statusBadgeOuter}>
               <View style={styles.statusBadgeInner} />
             </View>
@@ -82,35 +130,31 @@ export default function ProfileScreen() {
           </Text>
 
           <View style={styles.actionsRow}>
-            <Pressable
-              style={styles.primaryBtn}
-              onPress={() => {
-                // depois: edit profile
-              }}
-            >
+            <Pressable style={styles.primaryBtn} onPress={() => {}}>
               <Ionicons name="pencil-outline" size={16} color="#fff" />
               <Text style={styles.primaryBtnText}>Edit Profile</Text>
             </Pressable>
 
-            <Pressable
-              style={styles.secondaryBtn}
-              onPress={() => {
-                // depois: share
-              }}
-            >
+            <Pressable style={styles.secondaryBtn} onPress={() => {}}>
               <Ionicons name="share-social-outline" size={16} color="rgba(255,255,255,0.88)" />
               <Text style={styles.secondaryBtnText}>Share</Text>
             </Pressable>
           </View>
+
+          {/* Logout (novo, mas discreto) */}
+          <Pressable style={styles.logoutBtn} onPress={onLogout}>
+            <Ionicons name="log-out-outline" size={16} color="rgba(255,255,255,0.75)" />
+            <Text style={styles.logoutText}>Logout</Text>
+          </Pressable>
         </View>
 
         {/* STATS */}
         <View style={styles.statsCard}>
-          <Stat value={42} label="Check-ins" />
+          <Stat value={user.stats.checkins} label="Check-ins" />
           <View style={styles.divider} />
-          <Stat value={18} label="Reviews" />
+          <Stat value={user.stats.reviews} label="Reviews" />
           <View style={styles.divider} />
-          <Stat value={156} label="Saved" />
+          <Stat value={user.stats.saved} label="Saved" />
         </View>
 
         {/* YOUR VIBES */}
@@ -119,8 +163,9 @@ export default function ProfileScreen() {
           <Text style={styles.vibesSubtitle}>Personalize your recommendations</Text>
 
           <View style={styles.chipRow}>
-            <Chip>Bar / Drinks</Chip>
-            <Chip>Club / Party</Chip>
+            {(user.vibes ?? []).map((v) => (
+              <Chip key={v}>{v}</Chip>
+            ))}
           </View>
         </View>
       </View>
@@ -319,6 +364,23 @@ const styles = StyleSheet.create({
   },
   secondaryBtnText: {
     color: 'rgba(255,255,255,0.88)',
+    fontFamily: 'Inter_700Bold',
+  },
+
+  logoutBtn: {
+    marginTop: 16,
+    height: 40,
+    borderRadius: 999,
+    borderWidth: 1,
+    borderColor: 'rgba(255,255,255,0.14)',
+    backgroundColor: 'rgba(255,255,255,0.03)',
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 10,
+  },
+  logoutText: {
+    color: 'rgba(255,255,255,0.75)',
     fontFamily: 'Inter_700Bold',
   },
 

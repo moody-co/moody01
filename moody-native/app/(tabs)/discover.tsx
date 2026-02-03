@@ -1,49 +1,15 @@
+import React from 'react'
 import { View, Text, Pressable, FlatList } from 'react-native'
 import { Ionicons } from '@expo/vector-icons'
 import { router } from 'expo-router'
 
-import { PlaceCard } from '../../components/PlaceCard'
-
-type Event = {
-  id: string
-  title: string
-  venueName: string
-  peopleHere: number
-  badges?: string[]
-  coverImageUrl: string
-}
-
-const MOCK_EVENTS: Event[] = [
-  {
-    id: '1',
-    title: 'The Neon Party',
-    venueName: "Jocker's bar",
-    peopleHere: 128,
-    badges: ['HOT'],
-    coverImageUrl:
-      'https://images.unsplash.com/photo-1516450360452-9312f5e86fc7?auto=format&fit=crop&w=1200&q=80',
-  },
-  {
-    id: '2',
-    title: 'The Neon Party',
-    venueName: "Jocker's bar",
-    peopleHere: 120,
-    badges: ['HOT'],
-    coverImageUrl:
-      'https://images.unsplash.com/photo-1515168833906-d2a3b82b302a?auto=format&fit=crop&w=1200&q=80',
-  },
-  {
-    id: '3',
-    title: 'Disco Fever',
-    venueName: 'Downtown Club',
-    peopleHere: 76,
-    badges: [],
-    coverImageUrl:
-      'https://images.unsplash.com/photo-1524368535928-5b5e00ddc76b?auto=format&fit=crop&w=1200&q=80',
-  },
-]
+import { useDiscoverFeed } from '@/src/features/discover/use-discover-feed'
+import { PlaceCard } from '@/components/PlaceCard'
+import { ScreenState } from '@/components/ui/ScreenState'
 
 export default function DiscoverScreen() {
+  const { data, loading, error, reload } = useDiscoverFeed()
+
   return (
     <View style={{ flex: 1, backgroundColor: '#000' }}>
       {/* Header */}
@@ -103,34 +69,42 @@ export default function DiscoverScreen() {
         </Pressable>
       </View>
 
-      {/* List */}
-      <FlatList
-        data={MOCK_EVENTS}
-        keyExtractor={(item) => item.id}
-        contentContainerStyle={{
-          paddingHorizontal: 24,
-          paddingTop: 14,
-          paddingBottom: 130,
-        }}
-        renderItem={({ item }) => (
-          <PlaceCard
-            name={item.title}
-            location={item.venueName}
-            liveCount={item.peopleHere}
-            temperature={item.badges?.includes('HOT') ? 'Hot' : 'Warm'}
-            image={item.coverImageUrl}
-            onPress={() =>
-              router.push(
-                {
-                  pathname: '/event/[eventId]',
-                  params: { eventId: item.id },
-                } as any
-              )
-            }
-          />
-        )}
-        showsVerticalScrollIndicator={false}
-      />
+      {/* Content */}
+      {loading ? (
+        <ScreenState variant="loading" title="Loading..." />
+      ) : error ? (
+        <ScreenState variant="error" message={error} onRetry={reload} />
+      ) : (
+        <FlatList
+          data={data?.events ?? []}
+          keyExtractor={(item) => item.id}
+          contentContainerStyle={{
+            paddingHorizontal: 24,
+            paddingTop: 14,
+            paddingBottom: 130,
+          }}
+          renderItem={({ item }) => (
+            <PlaceCard
+              name={item.title}
+              location={item.venueName}
+              liveCount={item.peopleHere}
+              temperature={item.temperature}
+              image={item.coverImageUrl}
+              onPress={() =>
+                router.push(
+                  {
+                    pathname: '/event/[eventId]',
+                    params: { eventId: item.id },
+                  } as any
+                )
+              }
+            />
+          )}
+          showsVerticalScrollIndicator={false}
+          refreshing={loading}
+          onRefresh={reload}
+        />
+      )}
     </View>
   )
 }

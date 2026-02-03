@@ -1,9 +1,7 @@
-// src/config/api.ts
 export const API = {
-  // ✅ No celular, "localhost" NÃO é o seu PC.
-  // Use o IP da sua máquina na rede (ex: 192.168.15.155)
-  baseURL: 'http://192.168.15.155:3333',
+  baseURL: process.env.EXPO_PUBLIC_API_URL ?? 'http://127.0.0.1:3333',
 }
+
 
 export type ApiRequestOptions = {
   method?: 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE'
