@@ -6,17 +6,21 @@ type Props = {
   location: string
   liveCount: number
   temperature: 'Hot' | 'Warm' | 'Cold' | string | undefined
-  image: string
+  image?: string
   onPress?: () => void
 }
 
 const UI = {
-  imageHeight: 160, 
+  imageHeight: 160,
   cardRadius: 22,
 }
 
+const FALLBACK_IMAGE =
+  'https://images.unsplash.com/photo-1524368535928-5b5e00ddc76b?auto=format&fit=crop&w=1200&q=80'
+
 export function PlaceCard({ name, location, liveCount, temperature, image, onPress }: Props) {
   const isHot = String(temperature).toLowerCase() === 'hot'
+  const imageUri = image && image.trim().length > 0 ? image : FALLBACK_IMAGE
 
   return (
     <Pressable
@@ -34,7 +38,7 @@ export function PlaceCard({ name, location, liveCount, temperature, image, onPre
       {/* Image */}
       <View style={{ position: 'relative' }}>
         <Image
-          source={{ uri: image }}
+          source={{ uri: imageUri }}
           style={{ width: '100%', height: UI.imageHeight }}
           resizeMode="cover"
         />
@@ -69,7 +73,14 @@ export function PlaceCard({ name, location, liveCount, temperature, image, onPre
       {/* Infos */}
       <View style={{ backgroundColor: '#1B1426', paddingVertical: 14, paddingHorizontal: 16 }}>
         {/* Title + HOT */}
-        <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', gap: 10 }}>
+        <View
+          style={{
+            flexDirection: 'row',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            gap: 10,
+          }}
+        >
           <Text
             style={{
               color: '#fff',
@@ -123,13 +134,32 @@ export function PlaceCard({ name, location, liveCount, temperature, image, onPre
         />
 
         {/* Location */}
-        <Text style={{ color: 'rgba(255,255,255,0.70)', fontSize: 13.5, fontFamily: 'Inter_500Medium' }}>
+        <Text
+          style={{
+            color: 'rgba(255,255,255,0.70)',
+            fontSize: 13.5,
+            fontFamily: 'Inter_500Medium',
+          }}
+        >
           {location}
         </Text>
 
         {/* Footer */}
-        <View style={{ marginTop: 10, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
-          <Text style={{ color: 'rgba(255,255,255,0.70)', fontSize: 13, fontFamily: 'Inter_500Medium' }}>
+        <View
+          style={{
+            marginTop: 10,
+            flexDirection: 'row',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+          }}
+        >
+          <Text
+            style={{
+              color: 'rgba(255,255,255,0.70)',
+              fontSize: 13,
+              fontFamily: 'Inter_500Medium',
+            }}
+          >
             {liveCount} people here
           </Text>
 

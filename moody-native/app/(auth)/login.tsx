@@ -1,10 +1,14 @@
-// FRONT: moody-native/app/(auth)/login.tsx
 import React, { useState } from 'react'
-import { View, Text, TextInput, Pressable } from 'react-native'
+import { View, Text, Pressable } from 'react-native'
 import { router } from 'expo-router'
+
 import { useAuth } from '@/src/auth/auth.hooks'
 import { toUserMessage } from '@/src/shared/errors/ui-error'
 import { validateEmail, validatePassword } from '@/src/shared/validation/auth-validate'
+
+import { AuthInput } from '@/components/ui/AuthInput'
+import { PrimaryButton } from '@/components/ui/PrimaryButton'
+import { colors } from '@/src/theme/tokens'
 
 export default function LoginScreen() {
   const { login } = useAuth()
@@ -16,7 +20,6 @@ export default function LoginScreen() {
   const [error, setError] = useState<string | null>(null)
 
   async function onSubmit() {
-    // validação antes do request (UX)
     if (!validateEmail(email)) {
       setError('Digite um e-mail válido')
       return
@@ -39,66 +42,49 @@ export default function LoginScreen() {
   }
 
   return (
-    <View style={{ flex: 1, backgroundColor: '#000', padding: 18, justifyContent: 'center' }}>
-      <Text style={{ color: '#fff', fontSize: 26, fontFamily: 'Inter_800ExtraBold' }}>Login</Text>
+    <View style={{ flex: 1, backgroundColor: colors.bg, padding: 18, justifyContent: 'center' }}>
+      <Text style={{ color: colors.text, fontSize: 26, fontFamily: 'Inter_800ExtraBold' }}>
+        Login
+      </Text>
 
-      <Text style={{ color: 'rgba(255,255,255,0.6)', marginTop: 10, fontFamily: 'Inter_600SemiBold' }}>Email</Text>
-      <TextInput
+      <Text style={{ color: 'rgba(255,255,255,0.6)', marginTop: 10, fontFamily: 'Inter_600SemiBold' }}>
+        Email
+      </Text>
+      <AuthInput
         value={email}
         onChangeText={setEmail}
         autoCapitalize="none"
         keyboardType="email-address"
         editable={!loading}
-        style={inputStyle}
         placeholder="seuemail@exemplo.com"
-        placeholderTextColor="rgba(255,255,255,0.35)"
       />
 
-      <Text style={{ color: 'rgba(255,255,255,0.6)', marginTop: 12, fontFamily: 'Inter_600SemiBold' }}>Senha</Text>
-      <TextInput
+      <Text style={{ color: 'rgba(255,255,255,0.6)', marginTop: 12, fontFamily: 'Inter_600SemiBold' }}>
+        Senha
+      </Text>
+      <AuthInput
         value={password}
         onChangeText={setPassword}
         secureTextEntry
         editable={!loading}
-        style={inputStyle}
         placeholder="********"
-        placeholderTextColor="rgba(255,255,255,0.35)"
       />
 
-      {error ? <Text style={{ color: '#ff8a8a', marginTop: 12, fontFamily: 'Inter_600SemiBold' }}>{error}</Text> : null}
-
-      <Pressable
-        onPress={onSubmit}
-        disabled={loading}
-        style={{
-          marginTop: 16,
-          height: 48,
-          borderRadius: 999,
-          backgroundColor: 'rgba(168,85,247,0.95)',
-          alignItems: 'center',
-          justifyContent: 'center',
-          opacity: loading ? 0.6 : 1,
-        }}
-      >
-        <Text style={{ color: '#fff', fontFamily: 'Inter_800ExtraBold' }}>
-          {loading ? 'Entrando...' : 'Entrar'}
+      {error ? (
+        <Text style={{ color: colors.danger, marginTop: 12, fontFamily: 'Inter_600SemiBold' }}>
+          {error}
         </Text>
-      </Pressable>
+      ) : null}
+
+      <View style={{ marginTop: 16 }}>
+        <PrimaryButton title={loading ? 'Entrando...' : 'Entrar'} onPress={onSubmit} loading={loading} />
+      </View>
 
       <Pressable onPress={() => router.push('/(auth)/register')} style={{ marginTop: 14, alignItems: 'center' }}>
-        <Text style={{ color: 'rgba(255,255,255,0.7)', fontFamily: 'Inter_600SemiBold' }}>Criar conta</Text>
+        <Text style={{ color: 'rgba(255,255,255,0.7)', fontFamily: 'Inter_600SemiBold' }}>
+          Criar conta
+        </Text>
       </Pressable>
     </View>
   )
 }
-
-const inputStyle = {
-  marginTop: 8,
-  height: 48,
-  borderRadius: 12,
-  borderWidth: 1,
-  borderColor: 'rgba(255,255,255,0.12)',
-  paddingHorizontal: 12,
-  color: '#fff',
-  fontFamily: 'Inter_600SemiBold',
-} as const
