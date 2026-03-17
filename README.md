@@ -74,5 +74,3 @@ O modelo de dados (Prisma) é composto por:
 * `/tickets`: Gerenciamento de ingressos comprados.
 
 ---
-
-Qual funcionalidade específica você gostaria que eu detalhasse mais para adicionar à documentação técnica do seu README?
