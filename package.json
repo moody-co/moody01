@@ -1,12 +1,11 @@
 {
-  "name": "moody-monorepo",
+  "name": "api",
   "private": true,
   "workspaces": [
-    "apps/*"
+    "app/*"
   ],
   "scripts": {
-    "dev:api": "npm run dev --workspace=apps/api",
-    "dev:mobile": "npm run start --workspace=apps/mobile",
-    "dev": "npm run dev:api & npm run dev:mobile"
+    "dev:api": "npm run dev --workspace=api",
+    "dev:mobile": "npm run start --workspace=mobile"
   }
 }

@@ -1,0 +1,31 @@
+# Dependências
+node_modules/
+
+# Configurações locais e segredos (MUITO IMPORTANTE)
+.env
+.env.local
+.env.*.local
+
+# Expo e Mobile
+.expo/
+dist/
+web-build/
+*.jks
+*.p12
+*.key
+*.mobileprovision
+
+# Backend e Compilação
+dist/
+build/
+*.log
+
+# IDEs
+.vscode/*
+!.vscode/extensions.json
+!.vscode/settings.json
+.idea/
+.DS_Store
+
+# Prisma
+/app/api/prisma/migrations/
