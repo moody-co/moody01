@@ -1,8 +1,8 @@
 {
-  "name": "api",
+  "name": "moody-monorepo",
   "private": true,
   "workspaces": [
-    "app/*"
+    "apps/*"
   ],
   "scripts": {
     "dev:api": "npm run dev --workspace=api",
